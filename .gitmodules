@@ -1,0 +1,3 @@
+[submodule "pico_fatfs_test"]
+	path = pico_fatfs_test
+	url = https://github.com/kwhr0/pico_fatfs_test.git
