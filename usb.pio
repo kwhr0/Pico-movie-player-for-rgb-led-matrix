@@ -1,0 +1,43 @@
+.program usb
+.side_set 2 opt pindirs
+start:
+	out x, 16 side 0		; loop count -1
+	out y, 16				; 0: reset 1: no-input 2: input
+	jmp y--, loop
+reset:
+	set pins, 0 side 3 [2]
+	jmp x--, reset
+	set pins, 3
+	jmp start
+loop:
+	out pins, 2 side 3 [2]
+	jmp x--, loop
+	out null, 30 side 0		; discard extra data
+	jmp !y, start
+	wait 0 pin 0 [1]		; wait until D- == 0
+.wrap_target
+	in pins, 2
+	mov y, isr
+	push
+	jmp !y, start	 		; restart if EOP
+.wrap
+
+% c-sdk {
+#include "hardware/clocks.h"
+
+static inline void usb_program_init(PIO pio, uint sm, uint offset) {
+	const uint pin = 26, count = 2;
+	pio_sm_config c = usb_program_get_default_config(offset);
+	sm_config_set_out_pins(&c, pin, count);
+	sm_config_set_set_pins(&c, pin, count);
+	sm_config_set_in_pins(&c, pin);
+	sm_config_set_sideset_pins(&c, pin);
+	sm_config_set_in_shift(&c, false, false, 2); // shift left, no-autopush
+	sm_config_set_out_shift(&c, true, true, 32); // shift right, autopull
+	pio_gpio_init(pio, pin);
+	pio_gpio_init(pio, pin + 1);
+	sm_config_set_clkdiv(&c, clock_get_hz(clk_sys) / 6e6f); // 6MHz
+	pio_sm_init(pio, sm, offset, &c);
+	pio_sm_set_enabled(pio, sm, true);
+}
+%}
