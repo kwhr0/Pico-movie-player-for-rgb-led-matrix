@@ -46,7 +46,7 @@ static constexpr struct Gamma {
 		u32 *sp0 = buf, *sp1 = &buf[WIDTH * HEIGHT / 2];
 		u32 *dp[PWMSEG];
 		for (int i = 0; i < PWMSEG; i++) dp[i] = rgb[!sw][i][0];
-		for (int y = 0; y < HEIGHT / 2; y++) {
+		for (int y = 0; y < HEIGHT / 2; y++)
 			for (int x = 0; x < WIDTH; x++) {
 				u32 s0 = *sp0++, s1 = *sp1++;
 				const u32 *g00 = t[s0 & 0xff], *g01 = t[s0 >> 16 & 0xff], *g02 = t[s0 >> 8 & 0xff];
@@ -55,7 +55,6 @@ static constexpr struct Gamma {
 					*dp[i]++ = g02[i] << 2 | g01[i] << 1 | g00[i] |
 						g12[i] << 5 | g11[i] << 4 | g10[i] << 3;
 			}
-		}
 	}
 	u32 tbl[GAMMA_N][256][PWMSEG];
 } gammaTable;
@@ -91,7 +90,7 @@ void hub75_main() {
 		pwmbits = pwmbits_next;
 		rps = rps_next;
 		uint loop = (u64)clock_get_hz(clk_sys) * (1 << pwmbits) / (rps * (HEIGHT / 2) * ((1 << pwmbits) - 1));
-		for (int y = 0; y < HEIGHT / 2; y++) {
+		for (int y = 0; y < HEIGHT / 2; y++)
 			for (int bit = 0; bit < pwmbits; bit++) {
 				uint n = (loop >> pwmbits - 1 - bit) + 1 >> 1;
 				if (!n) continue;
@@ -103,7 +102,6 @@ void hub75_main() {
 				wait_tx_stall(pio, sm_row);
 				pio_sm_put_blocking(pio, sm_row, y | n - 1 << 5);
 			}
-		}
 		if (to_us_since_boot(get_absolute_time()) >= next) {
 			next += 1000000 / FPS;
 			sw = !sw;
@@ -115,7 +113,7 @@ void hub75_copy_and_wait(u32 *buf, int time) {
 	gammaTable.conv(buf);
 	static int lastsw;
 	while (lastsw == sw)
-		;
+		tight_loop_contents();
 	lastsw = sw;
 	next += time >> 4;
 }

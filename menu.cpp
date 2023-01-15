@@ -14,10 +14,10 @@ static std::vector<char> text;
 
 static constexpr struct Curve {
 	static constexpr int N = 16;
-	static constexpr double A = 0.1;
+	static constexpr float A = .1f;
 	constexpr Curve() : t() {
 		for (int i = 0; i < N; i++) {
-			double x = i / double(N - 1);
+			float x = i / float(N - 1);
 			t[i] = 0xffff * (A * x / (A + x * (1 - x)));
 		}
 	}
@@ -81,7 +81,7 @@ static struct Top : Elm {
 	static inline const char *title[] = { "FILE", "VOLUME", "GAMMA", "PWM", "RPS" };
 } m_top;
 
-void menu_putchar(int c) {
+static void menu_putchar(int c) {
 	text.push_back(c);
 }
 
