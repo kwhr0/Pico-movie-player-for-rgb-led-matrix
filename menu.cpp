@@ -49,19 +49,19 @@ static struct Volume : Elm {
 } m_volume;
 
 static struct Gamma : Elm {
-	Gamma() { v = GAMMA_STD; vmax = GAMMA_N - 1; }
+	Gamma() { v = GAMMA_STD; vmax = GAMMA_N - 1; update(); }
 	void update() { hub75_set_gamma_index(v); }
 	void draw() { float g = gamma_value(v); xprintf("GAMMA %.1f", g); }
 } m_gamma;
 
 static struct PWM : Elm {
-	PWM() { v = vmax = PWMMAX; vmin = 1; }
+	PWM() { v = vmax = PWMMAX; vmin = 1; update(); }
 	void update() { hub75_set_pwmbits(v); }
 	void draw() { xprintf("PWM %d", v); }
 } m_pwm;
 
 static struct RPS : Elm {
-	RPS() { v = vmax = 12; vmin = 3; }
+	RPS() { v = vmax = 12; vmin = 3; update(); }
 	void update() { hub75_set_rps(10 * v); }
 	void draw() { xprintf("RPS %d", 10 * v); }
 } m_rps;

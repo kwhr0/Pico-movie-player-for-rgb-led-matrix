@@ -16,9 +16,9 @@
 
 static u32 rgb[2][PWMSEG][HEIGHT / 2][WIDTH];
 static u64 next;
-static int gamma_index, gamma_index_next = GAMMA_STD;
-static int pwmbits, pwmbits_next = PWMMAX;
-static int rps, rps_next = 120;
+static int gamma_index, gamma_index_next;
+static int pwmbits, pwmbits_next;
+static int rps, rps_next;
 static uint sm_rgb, sm_row, dma_ch;
 static PIO pio;
 volatile static int sw;
