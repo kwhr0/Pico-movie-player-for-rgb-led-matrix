@@ -51,7 +51,7 @@ static struct Volume : Elm {
 static struct Gamma : Elm {
 	Gamma() { v = GAMMA_STD; vmax = GAMMA_N - 1; update(); }
 	void update() { hub75_set_gamma_index(v); }
-	void draw() { float g = gamma_value(v); xprintf("GAMMA %.1f", g); }
+	void draw() { xprintf("GAMMA %.1f", gamma_value(v)); }
 } m_gamma;
 
 static struct PWM : Elm {
